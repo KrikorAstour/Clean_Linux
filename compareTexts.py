@@ -6,7 +6,10 @@ import sys
 from os import path
 
 def main():
-	lines = []
+
+	afterMIL_lines = []
+	beforeMIL_lines = []
+	
 	beforeMIL_file = open("ubuntu22before.txt")
 	afterMIL_file = open("afterMIL.txt")
 	
@@ -15,17 +18,20 @@ def main():
 	
 	#Read the file and store the values in a list
 	for i in range(len(afterMIL)):
-		lines.append(afterMIL[i].strip())
+		afterMIL_lines.append(afterMIL[i].strip())
 	
-	print(len(lines))
+	#Read the file and store the values in a list
+	for i in range(len(beforeMIL)):
+		beforeMIL_lines.append(beforeMIL[i].strip())
 	
+	print(afterMIL_lines[781670])
 	
-	str = '/opt/matrox_imaging/contexts/FCNET_MONO_XL.mclass'
-	
-	if str in lines:
+	str = "matrox"
+	if str in afterMIL_lines:
 		print("yes")
 	else:
 		print("nop")
+	
 	beforeMIL_file.close()
 	afterMIL_file.close()
 	return 0
