@@ -1,6 +1,6 @@
 import os.path
 import logging
-import platform
+import platform 
 import distro
 import sys
 
@@ -16,7 +16,12 @@ def main():
 	
 	print("Files exist: ", counter)
 	print("Files does not exist: ", counter2)
-	print(471706 - 427651)
+	
+	version, distro = getOSDetails(platform.version())
+	print("Your distro is: ",distro , " Version: ", version)
+	print(platform.platform())
+	# Output on RedHat9
+	# > Linux-5.14.0-70.13.1.el9_0.x86_64-x86_64-with-glibc2.34
 	return 0
 	
 def getOSDetails(version):
