@@ -1,20 +1,41 @@
 import os.path
 import logging
+import platform
+import subprocess
 
+THE_PYTHON_VERSION_USED_TO_WRITE_THIS_SCRIPT = '3.10.6'
+
+# These commands show if MIL is still installed on the device, if they returned empty, then mil is uninstalled so do the check/clean function
+cmd_ubuntu_mil_full = 'dpkg-query -l |grep -E mil-full'
+cmd_ubuntu_mil_lite = 'dpkg-query -l |grep -E mil-lite'
 
 logging.basicConfig(filename='CleanLinux.log',
                     filemode='a',
                     format='%(asctime)s %(levelname)s | %(message)s',
-                    datefmt='%H:%M:%S',
+                    datefmt='%y-%m-%d %H:%M:%S',
                     level=logging.INFO)
 
 def main():
-	
+	# Get the name of the linux distribution currently installed
 	distro = getDistro()
+
+	#Get the python version installed 
+	python_version = platform.python_version()
+	print(python_version)
 	
+	# Check if MIL is still installed on Ubuntu
+	check_ubuntu_mil_full = subprocess.getoutput(cmd_ubuntu_mil_full)
+	check_ubuntu_mil_lite = subprocess.getoutput(cmd_ubuntu_mil_lite)
+	
+	
+	# Select the clean function that matches the distibution
 	match distro:
 		case "ubuntu":
-			cleanUbuntu()
+			if check_ubuntu_mil_full == "" and check_ubuntu_mil_lite == "":
+				print("mil is not installed, we perform the check")
+				cleanUbuntu()
+			else:
+				print("MIL is still installed on this device. Uninstall MIL then run this script.")
 		case "redhat":
 			cleanRedhat()
 		case "suse":
@@ -49,58 +70,51 @@ def getDistro():
 
 
 def cleanUbuntu():
-# This function deletes all the file created by MIL in Ubuntu
+# This function looks for all the file created by MIL in Ubuntu
 	METHOD_NAME = 'cleanUbuntu Method'
 	ubuntu_list_path = 'ubuntu/test.txt'
-	filesDeleted = 0;
+	filesFound = 0;
 	
 	if(os.path.exists(ubuntu_list_path)):
-		try:
-			with open(ubuntu_list_path) as f:
-				for line in f:
-					if(os.path.exists(line.strip())):
-						os.remove(line.strip())
-						filesDeleted += 1
-			
-			logger = logging.getLogger()
-			logger.info(str(count) + ' Files have been deleted')			
-				
-		except:
-			logger = logging.getLogger()
-			logger.error('Something went wrong in ' + METHOD_NAME)
+		
+		with open(ubuntu_list_path) as f:
+			for line in f:
+				if(os.path.exists(line.strip())):
+					filesFound += 1
+		
+		
+		logger = logging.getLogger()
+		logger.info(str(filesFound) + ' File(s) have been found')				
+		
 	else:
 		logger = logging.getLogger()
 		logger.error('Path does not exist. ' + ubuntu_list_path + ' --- ' + METHOD_NAME)
 	
 
 def cleanRedhat():
-# This function deletes all the files created by MIL in RedHat
+# This function looks for all the files created by MIL in RedHat
 	METHOD_NAME = 'cleanRedhat Method'
 	redhat_list_path = 'redhat/test.txt'
-	filesDeleted = 0
+	filesFound = 0
 	if(os.path.exists(redhat_list_path)):
-		try:
-			with open(redhat_list_path) as f:
-				for line in f:
-					if(os.path.exists(line.strip())):
-						os.remove(line.strip())
-						filesDeleted += 1
-			logger = logging.getLogger()
-			logger.info(str(count) + ' Files have been deleted')
 		
-		except:
-			logger = logging.getLogger()
-			logger.error('Something went wrong in ' + METHOD_NAME)
+		with open(redhat_list_path) as f:
+			for line in f:
+				if(os.path.exists(line.strip())):
+					filesFound += 1
+		logger = logging.getLogger()
+		logger.info(str(filesFound) + ' File(s) have been found')
+
 	else:
 		logger = logging.getLogger()
 		logger.error('Path does not exist. ' + redhat_list_path + ' --- ' + METHOD_NAME)	
 
 		
 def cleanSuse():
-#This function deletes all the MIL files in Suse
+#This function looks for all the MIL files in Suse
 	METHOD_NAME = 'cleanSuse Method'
 	suse_list_path = 'suse/test.txt'
-	filesDeleted = 0
+	filesFound = 0
 	
 	if(os.path.exists(suse_list_path)):
 		try:
@@ -108,10 +122,10 @@ def cleanSuse():
 				for line in f:
 					if(os.path.exists(line.strip())):
 						os.remove(line.strip())
-						filesDeleted += 1
+						filesFound += 1
 			
 			logger = logging.getLogger()
-			logger.info(str(count) + ' File(s) have been deleted')
+			logger.info(str(filesFound) + ' File(s) have been found')
 		except:
 			logger = logging.getLogger()
 			logger.error('Something went wrong in ' + METHOD_NAME)
