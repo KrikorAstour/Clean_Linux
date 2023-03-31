@@ -11,13 +11,12 @@ python_version = '3.10.6'
 cmd_ubuntu_mil_full = 'dpkg-query -l |grep -E mil-full'
 cmd_ubuntu_mil_lite = 'dpkg-query -l |grep -E mil-lite'
 
-# These commands show if MIL is still installed on Redhat and Suse
+# These commands show if MIL is still installed on Redhat or Suse
 cmd_rh_suse_mil_full = 'rpm -qa|grep -E mill-full'
 cmd_rh_suse_mil_lite = 'rpm -qa|grep -E mill-lite'
 
 formatter = logging.Formatter('%(asctime)s %(levelname)s | %(message)s')
 
-# Create a logging file
 
 
 def main():
@@ -33,16 +32,16 @@ def main():
 	print(python_current)
 	
 	
-	# Select the clean function that matches the distibution
+	# Select the clean function that matches the distibution being used
 	match distro:
 		case "ubuntu":
 			# Get the output of the commands to verify MIL is not installed
 			check_ubuntu_mil_full = subprocess.getoutput(cmd_ubuntu_mil_full)
 			check_ubuntu_mil_lite = subprocess.getoutput(cmd_ubuntu_mil_lite)
 			
-			# Check if the output is empty
+			# Check if MIL is still installed
 			if check_ubuntu_mil_full == "" and check_ubuntu_mil_lite == "":
-				print("mil is not installed, we perform the check")
+				print("MIL is not installed, we perform the check")
 				cleanUbuntu(files_logger, info_logger)
 				print("Terminus!")
 			else:
@@ -85,7 +84,7 @@ def getDistro():
 def cleanUbuntu(files_logger, info_logger):
 # This function looks for all the file created by MIL in Ubuntu
 	METHOD_NAME = 'cleanUbuntu Method'
-	ubuntu_list_path = 'ubuntu/tesat.txt'
+	ubuntu_list_path = 'ubuntu/test.txt'
 	filesFound = 0;
 	valid_answer = False
 	valid_confirm = False
@@ -100,12 +99,12 @@ def cleanUbuntu(files_logger, info_logger):
 		
 		# If no files are found, delete the empty .log file								
 		if(filesFound == 0):
-			os.remove("/List of remaining MIL files.log")
+			os.remove("List of remaining MIL files.log")
 		info_logger.info(str(filesFound) + ' File(s) have been found')			
 		
 	else:	
 		# If the list path does not exist, delete the empty .log file							
-		os.remove("/List of remaining MIL files.log")	
+		os.remove("List of remaining MIL files.log")	
 		info_logger.error('Path does not exist. ' + ubuntu_list_path + ' --- ' + METHOD_NAME)
 		
 	if(filesFound > 0):
