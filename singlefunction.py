@@ -63,9 +63,8 @@ def cleanMILFiles(files_logger, info_logger, dist_name):
                 if os.path.exists(line.strip()):
                     filesFound += 1
                     files_logger.info(line.strip())
-
-       
-        info_logger.info(str(filesFound) + ' File(s) have been found')
+                    
+            info_logger.info(str(filesFound) + ' File(s) have been found')
 
     else:
         os.remove("List of remaining MIL files.log")
@@ -81,13 +80,16 @@ def cleanMILFiles(files_logger, info_logger, dist_name):
     		print("\n Invalid selection.\n")
     	elif(selection == '1'):
     		valid_selection = True
+    		os.system('gedit ')
     		print("Deleting MIL files...")
     	elif(selection == '2'):
     		valid_selection = True
-    		print('selected the second option')
+    		# Call delete script
+    		print('selected the secofnd option')
     	elif(selection == '3'):
     		valid_selection = True
-    		os.system('exit')
+    		sys.exit()
+    		print("should be gone")
 
     if filesFound > 0:
         while not valid_answer:
@@ -108,7 +110,7 @@ def cleanMILFiles(files_logger, info_logger, dist_name):
                 valid_answer = True
                 
 def getDistro():
-	# This function gets the name of linux distribution and the version and retruns it as a string
+	# This function gets the name of linux distribution and the version and returns it as a string
 	METHOD_NAME = 'getDistro Method'
 	linux_distro = ""
 	osRelease = open('/etc/os-release')
