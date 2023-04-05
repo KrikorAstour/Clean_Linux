@@ -38,7 +38,7 @@ def main():
 			if answer.lower() == 'y' or answer.lower() == 'yes':
 				valid_answer = True
 				
-				#Ask user for confirmation before deleting
+				# Ask user for confirmation before deleting
 				while not valid_confirm:
 					confirm = input("Are you sure you want to delete the files? (Y/N)")
 					
@@ -48,6 +48,7 @@ def main():
 					
 					elif confirm.lower == 'n' or confirm.lower() == 'no'
 						valid_confirm = True
+						os.system('exit')
 			
 			else answer.lower() == 'n' or answer.lower() == 'no'
 				valid_answer = True
