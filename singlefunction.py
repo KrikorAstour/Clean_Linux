@@ -28,8 +28,13 @@ def main():
 	files_logger = setup_logger('first_logger', 'List of remaining MIL files.log')
 	info_logger = setup_logger('second_logger', 'INFO.log')
 	
-	cleanMILFiles(files_logger, info_logger, dist_name)
-
+	
+	if (isMILDeleted(dist_name)):
+		cleanMILFiles(files_logger, info_logger, dist_name)
+	
+	else:
+		print("MIL is still installed.")
+	
 def cleanMILFiles(files_logger, info_logger, dist_name):
 # Verify MIL has been uninstalled correctly
     METHOD_NAME = 'cleanMILFiles'
@@ -116,11 +121,12 @@ def getDistro():
 		return 'suse'
 	else:
 		info_logger.error('Error getting linux distribution in %s' % METHOD_NAME)
-        return
+		return
 		
-def checkMILInstallation(distro):
+def isMILDeleted(distro):
 # Checks if MIL is still installed and returns a boolean
-	METHOD_NAME = 'CheckMILInstallation Method'
+	
+	METHOD_NAME = 'isMILDeleted Method'
 	MIL_deleted = False
 	
 	if distro.lower() == 'ubuntu':
@@ -131,6 +137,9 @@ def checkMILInstallation(distro):
 			MIL_deleted = True
 			return MIL_deleted
 			
+		else:
+			return MIL_deleted
+			
 	elif ditro.lower() == 'redhat' or distro.lower() == 'suse':
 		rh_suse_mil_full = subprocess.getouput(cmd_rh_suse_mil_full)
 		rh_suse_mil_lite = subprocess.getouptu(cmd_rh_suse_mil_lite)
@@ -138,10 +147,13 @@ def checkMILInstallation(distro):
 		if rh_suse_mil_full == '' and rh_suse_mil_lite == '':
 			MIL_deleted = True
 			return MIL_deleted
+			
+		else:
+			return MIL_deleted
 				
 	else:
 		info_logger.error('Error checking MIL installation %s' % METHOD_NAME)
-        return
+		return
 			
 	
 
