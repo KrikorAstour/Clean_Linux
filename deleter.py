@@ -19,8 +19,7 @@ def main():
 	valid_confirm = False
 
 	
-	# Creat a .log file to write down the deleted files
-	delete_logger = setup_logger('delete_logger', 'Deleted files list.log')
+	
 	
 		# Ask user for confirmation before deleting
 	while not valid_confirm:
@@ -28,6 +27,8 @@ def main():
 		
 		if confirm.lower() == 'y' or confirm.lower() == 'yes':
 			valid_confirm = True
+			# Create a .log file to write down the deleted files
+			delete_logger = setup_logger('delete_logger', 'Deleted files list.log')
 			
 			# Read the .txt file and delete all existed files and directories
 			with open(list_path) as f:
@@ -35,14 +36,17 @@ def main():
 					if(os.path.exists(line.strip())):
 						if(os.path.isfile(line.strip())):
 							os.remove(line.strip())
+							deleted_files += 1
+							delete_logger.info(line)
 						else:
 							os.system("sudo rm -r " + line.strip())
 							#os.rmdir(line.strip())
 							deleted_files += 1
 							delete_logger.info(line)
-							
-			print(str(deleted_files) + ' File(s) have been deleted successfully.')
-		
+			
+			if deleted_files > 0:				
+				print(str(deleted_files) + ' File(s) have been deleted successfully.')
+			
 		elif confirm.lower() == 'n' or confirm.lower() == 'no':
 			valid_confirm = True
 			os.system('exit')
