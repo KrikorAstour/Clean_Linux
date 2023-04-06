@@ -115,7 +115,35 @@ def getDistro():
 	elif 'suse' in linux_distro.lower():
 		return 'suse'
 	else:
-		return 0
+		info_logger.error('Error getting linux distribution in %s' % METHOD_NAME)
+        return
+		
+def checkMILInstallation(distro):
+# Checks if MIL is still installed and returns a boolean
+	METHOD_NAME = 'CheckMILInstallation Method'
+	MIL_deleted = False
+	
+	if distro.lower() == 'ubuntu':
+		ubuntu_mil_full = subprocess.getoutput(cmd_ubuntu_mil_full)
+		ubuntu_mil_lite = subprocess.getoutput(cmd_ubuntu_mil_lite)
+		
+		if ubuntu_mil_full == '' and ubuntu_mil_lite == '':
+			MIL_deleted = True
+			return MIL_deleted
+			
+	elif ditro.lower() == 'redhat' or distro.lower() == 'suse':
+		rh_suse_mil_full = subprocess.getouput(cmd_rh_suse_mil_full)
+		rh_suse_mil_lite = subprocess.getouptu(cmd_rh_suse_mil_lite)
+		
+		if rh_suse_mil_full == '' and rh_suse_mil_lite == '':
+			MIL_deleted = True
+			return MIL_deleted
+				
+	else:
+		info_logger.error('Error checking MIL installation %s' % METHOD_NAME)
+        return
+			
+	
 
 def setup_logger(name, log_file, level=logging.INFO):
     # This function helps setting up multiple log files
