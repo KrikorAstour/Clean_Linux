@@ -35,7 +35,7 @@ def cleanMILFiles(files_logger, info_logger, dist_name):
     METHOD_NAME = 'cleanMILFiles'
     list_path = ''
         
-    # Change the path to list of MIL files based on the linux distribution in use
+    # Change the path of the list of MIL files based on the linux distribution in use
     if dist_name == 'ubuntu':
         list_path = 'ubuntu/test.txt'
         
@@ -54,9 +54,9 @@ def cleanMILFiles(files_logger, info_logger, dist_name):
     # Common code for all operating systems here
     filesFound = 0
     valid_answer = False
-    valid_confirm = False
     valid_selection = False
-
+    deleter_script = 'Deleter/deleter.py'
+    
     if os.path.exists(list_path):
         with open(list_path) as f:
             for line in f:
@@ -65,6 +65,8 @@ def cleanMILFiles(files_logger, info_logger, dist_name):
                     files_logger.info(line.strip())
                     
             info_logger.info(str(filesFound) + ' File(s) have been found')
+            
+            print('\n' + str(filesFound) + " File(s) are still on your PC.\n")
 
     else:
         os.remove("List of remaining MIL files.log")
@@ -73,42 +75,25 @@ def cleanMILFiles(files_logger, info_logger, dist_name):
     # Ask the user what they want next   
     while not valid_selection:
     	print("Select an option and press Enter:")
-    	selection = input("1) Display the list of the directories found.\n2) Delete the files created by MIL.\n3) Exit.\n")
+    	selection = input("1) Display the list of the directories found.\n2) Delete the files created by MIL.\n3) Exit.\n\n")
     	
     	# Verify the selection is valid
     	if(selection != '1' and selection != '2' and selection != '3'):
-    		print("\n Invalid selection.\n")
+    		print("\nInvalid selection.\n")
+    	
     	elif(selection == '1'):
     		valid_selection = True
     		os.system('gedit ')
     		print("Deleting MIL files...")
+    	
     	elif(selection == '2'):
     		valid_selection = True
-    		# Call delete script
-    		print('selected the secofnd option')
+    		os.system('python3 %s %s %s' % (deleter_script, dist_name, list_path))
+    	
     	elif(selection == '3'):
     		valid_selection = True
     		sys.exit()
-    		print("should be gone")
-
-    if filesFound > 0:
-        while not valid_answer:
-            answer = input(str(filesFound) + " File(s) are still on your PC, do you want to delete these files? (Y/N)\n")
-            if answer.lower() == "y" or answer.lower() == "yes":
-                valid_answer = True
-
-                while not valid_confirm:
-                    confirm = input("Are you sure you want to delete the files? (Y/N)\n")
-                    if confirm.lower() == "y" or confirm.lower() == "yes":
-                        #os.system('python3 runme.py %s %s' % (os_name, list_path))
-                        valid_confirm = True
-                    elif confirm.lower() == "n" or confirm.lower() == "no":
-                        valid_confirm = True
-
-            elif answer.lower() == "n" or answer.lower() == "no":
-                print("Answer was No")
-                valid_answer = True
-                
+              
 def getDistro():
 	# This function gets the name of linux distribution and the version and returns it as a string
 	METHOD_NAME = 'getDistro Method'
