@@ -12,24 +12,24 @@ cmd_ubuntu_mil_full = 'dpkg-query -l |grep -E mil-full'
 cmd_ubuntu_mil_lite = 'dpkg-query -l |grep -E mil-lite'
 
 # These commands show if MIL is still installed on Redhat or Suse
-cmd_rh_suse_mil_full = 'sudo rpm -qa|grep -E mill-full'
-cmd_rh_suse_mil_lite = 'sudo rpm -qa|grep -E mill-lite'
+cmd_rh_suse_mil_full = 'sudo rpm -qa|grep -E mil-full'
+cmd_rh_suse_mil_lite = 'sudo rpm -qa|grep -E mil-lite'
 
 # The .log file formatter
-formatter = logging.Formatter('%(asctime)s %(levelname)s | %(message)s')
+formatter = logging.Formatter('%(asctime)s :: %(levelname)s :: %(message)s' , "%Y-%m-%d %H:%M:%S")
 
 def main():
 # The main function that will be executed once the script run	
 	
-	# Get the name of the linux distribution currently installed
-	dist_name = getDistro()
-	
 	# Create logging files
-	files_logger = setup_logger('first_logger', 'List of remaining MIL files.log')
+	files_logger = setup_logger('first_logger', 'MIL_List.log')
 	info_logger = setup_logger('second_logger', 'INFO.log')
 	
+	# Get the name of the linux distribution currently installed
+	dist_name = getDistro(info_logger)
 	
-	if (isMILDeleted(dist_name)):
+	# Check if MIL is deleted
+	if (isMILDeleted(dist_name, info_logger)):
 		cleanMILFiles(files_logger, info_logger, dist_name)
 	
 	else:
@@ -42,13 +42,12 @@ def cleanMILFiles(files_logger, info_logger, dist_name):
         
     # Change the path of the list of MIL files based on the linux distribution in use
     if dist_name == 'ubuntu':
-        list_path = 'ubuntu/test.txt'
-        
+        list_path = 'Master_List/Master_list.txt'
     elif dist_name == 'redhat':
-        list_path = 'redhat/test.txt'
+        list_path = 'redhat/list.txt'
         
     elif dist_name == 'suse':
-        list_path = 'suse/test.txt'
+        list_path = 'suse/result.txt'
         
     else:
     	
@@ -74,9 +73,10 @@ def cleanMILFiles(files_logger, info_logger, dist_name):
             print('\n' + str(filesFound) + " File(s) are still on your PC.\n")
 
     else:
-        os.remove("List of remaining MIL files.log")
+        os.remove("MIL_List.log")
+        print('Error occured. Check INFO.log for more information.')
         info_logger.error('Path does not exist: %s --- %s' % (list_path, METHOD_NAME))
-    
+        sys.exit()
     # Ask the user what they want next   
     while not valid_selection:
     	print("Select an option and press Enter:")
@@ -88,8 +88,8 @@ def cleanMILFiles(files_logger, info_logger, dist_name):
     	
     	elif(selection == '1'):
     		valid_selection = True
-    		os.system('gedit ')
-    		print("Deleting MIL files...")
+    		subprocess.getoutput("gedit MIL_List.log")
+    		sys.exit()
     	
     	elif(selection == '2'):
     		valid_selection = True
@@ -99,7 +99,7 @@ def cleanMILFiles(files_logger, info_logger, dist_name):
     		valid_selection = True
     		sys.exit()
               
-def getDistro():
+def getDistro(info_logger):
 	# This function gets the name of linux distribution and the version and returns it as a string
 	METHOD_NAME = 'getDistro Method'
 	linux_distro = ""
@@ -115,7 +115,7 @@ def getDistro():
 			
 	if 'ubuntu' in linux_distro.lower():
 		return 'ubuntu'
-	elif 'redhat' in linux_distro.lower():
+	elif 'red hat' in linux_distro.lower():
 		return 'redhat'
 	elif 'suse' in linux_distro.lower():
 		return 'suse'
@@ -123,16 +123,19 @@ def getDistro():
 		info_logger.error('Error getting linux distribution in %s' % METHOD_NAME)
 		return
 		
-def isMILDeleted(distro):
+def isMILDeleted(distro, info_logger):
 # Checks if MIL is still installed and returns a boolean
 	
 	METHOD_NAME = 'isMILDeleted Method'
 	MIL_deleted = False
+	distro = str(distro)
 	
 	if distro.lower() == 'ubuntu':
+		# Store the output of the command that shows if MIL packages on Ubuntu
 		ubuntu_mil_full = subprocess.getoutput(cmd_ubuntu_mil_full)
 		ubuntu_mil_lite = subprocess.getoutput(cmd_ubuntu_mil_lite)
 		
+		# If the output of the commands are empty, means MIL does not exist
 		if ubuntu_mil_full == '' and ubuntu_mil_lite == '':
 			MIL_deleted = True
 			return MIL_deleted
@@ -140,9 +143,9 @@ def isMILDeleted(distro):
 		else:
 			return MIL_deleted
 			
-	elif ditro.lower() == 'redhat' or distro.lower() == 'suse':
-		rh_suse_mil_full = subprocess.getouput(cmd_rh_suse_mil_full)
-		rh_suse_mil_lite = subprocess.getouptu(cmd_rh_suse_mil_lite)
+	elif distro.lower() == 'redhat' or distro.lower() == 'suse':
+		rh_suse_mil_full = subprocess.getoutput(cmd_rh_suse_mil_full)
+		rh_suse_mil_lite = subprocess.getoutput(cmd_rh_suse_mil_lite)
 		
 		if rh_suse_mil_full == '' and rh_suse_mil_lite == '':
 			MIL_deleted = True
