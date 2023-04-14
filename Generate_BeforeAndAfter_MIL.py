@@ -26,14 +26,14 @@ def main():
 
 		# Make sure the file does not already exist to avoid duplicates
 		if(os.path.isfile("/home/std/Documetns/afterMIL.txt")):
-			print("The file already exists in the current directory.")
+			print("The file \"afterMIL.txt\" already exists in the current directory.")
 		else:
 			
 			os.system(cmd_afterMIL)
 	else:
-		
+		# Check if the file has not been already generated
 		if(os.path.isfile("/home/std/Documents/beforeMIL.txt")):
-			print("The file already exists in the current directory.")
+			print("The file \"beforeMIL.txt\" already exists in the current directory.")
 		else:
 			
 			os.system(cmd_beforeMIL)
